@@ -42,10 +42,11 @@ async function init() {
   const data = createLayer(filteredGeoJSON, map);
 
   const layers = {
-    "Count": choroplethLayer,
-    "Data": data
+    Count: choroplethLayer,
+    Data: data,
   };
-  layerControl = L.control.layers(layers).addTo(map);
+  layerControl = L.control.layers(layers, null, { collapsed: false }).addTo(map);
+  choroplethLayer.addTo(map);
 }
 
 init();

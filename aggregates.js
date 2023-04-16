@@ -23,8 +23,8 @@ async function createChoroplethLayer(zipcodeGeoJSONUrl, dataCsvUrl) {
     style: (feature) => {
       const zipcode = feature.properties.ZCTA5CE20;
       const count = dataByZipcode[zipcode] ? dataByZipcode[zipcode].length : 0;
-      const color = `rgba(0, 0, 255, ${count / 20 * 3})`;
-      return { fillColor: color, fillOpacity: 0.8, stroke: false};
+      const color = `rgba(0, 0, 255, ${count / 2})`;
+      return { fillColor: color, fillOpacity: 0.9, weight: 1, color: color};
     },
     onEachFeature: (feature, layer) => {
       const zipcode = feature.properties.ZCTA5CE20;
