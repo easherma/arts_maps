@@ -46,13 +46,26 @@ async function mergeDataWithZipcodes(zipcodeGeoJSONUrl, dataCsvUrl) {
   // Return the modified GeoJSON object
   return filteredGeoJSON;
 }
+
+
 // Call the mergeDataWithZipcodes function with the desired URLs
 mergeDataWithZipcodes(zipcodeGeoJSONUrl, dataCsvUrl)
-  .then((mergedGeoJSON) => {
-    console.log("Merged GeoJSON:", mergedGeoJSON);
+  .then((filteredGeoJSON) => {
+    console.log("Merged GeoJSON:", filteredGeoJSON);
     // return mergedGeoJSON;
     // Use the mergedGeoJSON object in your Leaflet map
-    L.geoJSON(mergedGeoJSON).addTo(map);
+    const geoJSONLayer = L.geoJSON(filteredGeoJSON, {
+      onEachFeature: function (feature, layer) {
+        let popupContent = "";
+        for (const [key, value] of Object.entries(feature.properties)) {
+          popupContent += `<b>${key}:</b> ${value}<br>`;
+        }
+        layer.bindPopup(popupContent);
+      },
+    }).addTo(map);
+  
+    // Zoom the map to fit the GeoJSON layer
+    map.fitBounds(geoJSONLayer.getBounds());
   })
   .catch((error) => {
     console.error("Error merging data with zipcodes:", error);

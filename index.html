@@ -14,27 +14,13 @@
     <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script> -->
     
-    <script src="map_data.js"></script>
+
 </head>
 <body>
     <div id="map" style="height: 100vh;"></div>
-    <script>
-        // Create a Leaflet map centered on the zip codes layer
-        var map = L.map('map', {
-            center: [40.6331, -89.3985],
-            zoom: 8
-        });
+    <script src="new.js"></script>
+    <script src="aggregates.js"></script>
+    <script src="index.js"></script>
 
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        }).addTo(map);
-
-
-
-
-
-
-    </script>
 </body>
 </html>
