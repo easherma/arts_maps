@@ -1,8 +1,5 @@
-async function mergeDataWithZipcodes(zipcodeGeoJSONUrl, dataCsvUrl) {
-  const { zipcodeGeoJSON, dataRows } = await getData(
-    zipcodeGeoJSONUrl,
-    dataCsvUrl
-  );
+async function mergeDataWithZipcodes(dataCsvUrl) {
+  const { zipcodeGeoJSON, dataRows } = await getData(dataCsvUrl);
 
   // Extract the unique zip codes from the CSV data
   const uniqueZipcodes = new Set(dataRows.map((row) => row.zipcode));
@@ -44,7 +41,9 @@ function addPopupsToGeoJSON(layer) {
 }
 
 function createLayer(geojson, map) {
-  const layer = L.geoJSON(geojson, { style: { stroke: false, fillOpacity: 0.9, color: 'green' } });
+  const layer = L.geoJSON(geojson, {
+    style: { stroke: false, fillOpacity: 0.9, color: "green" },
+  });
   addPopupsToGeoJSON(layer);
   return layer;
 }
