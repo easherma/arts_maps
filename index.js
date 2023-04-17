@@ -37,7 +37,6 @@ async function init() {
       '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
       'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
     maxZoom: 18,
-    minZoom: 8,
   }).addTo(map);
   // Fetch data
   // Define the URLs for the GeoJSON and CSV files
@@ -62,7 +61,6 @@ async function init() {
     .layers(null, layers, { collapsed: false })
     .addTo(map);
   helpDeskCounts.addTo(map);
-  map.setMaxBounds(map.getBounds());
 }
 
 init();
