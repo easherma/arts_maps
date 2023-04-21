@@ -55,7 +55,7 @@ async function init() {
 
   const layers = {
     "Help Desk Counts": helpDeskCounts,
-    "Door And Phone Outreach": OutreachCounts,
+    "Targeted Outreach": OutreachCounts,
   };
   layerControl = L.control
     .layers(null, layers, { collapsed: false })
