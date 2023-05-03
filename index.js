@@ -82,8 +82,8 @@ async function init() {
   const CommAreas = await createCommAreas();
 
   const layers = {
-    // "Help Desk Counts": helpDeskCounts,
-    // "Targeted Outreach": OutreachCounts,
+    "Help Desk Counts": helpDeskCounts,
+    "Targeted Outreach": OutreachCounts,
     Applicants: Applicants,
     "Chicago Community Areas": CommAreas,
   };
