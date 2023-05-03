@@ -70,11 +70,12 @@ async function init() {
   // Create choropleth layer
   const helpDeskCounts = await createChoroplethLayer({
     dataCsvUrl: "helpdesk.csv",
+    pickedColor: `131,42,42`,
   });
   const OutreachCounts = await createChoroplethLayer({
     dataCsvUrl: "outreach.csv",
     dataToDisplay: ["client_name"],
-    pickedColor: `118,42,131`.y,
+    pickedColor: `118,42,131`,
   });
   const Applicants = await createAppCounts();
   // const data = createLayer(filteredGeoJSON, map);
