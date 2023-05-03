@@ -72,6 +72,7 @@ async function init() {
     dataCsvUrl: "helpdesk.csv",
     pickedColor: `131,42,42`,
   });
+  // outreach
   const OutreachCounts = await createChoroplethLayer({
     dataCsvUrl: "outreach.csv",
     dataToDisplay: ["client_name"],
