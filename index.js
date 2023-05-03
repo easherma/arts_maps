@@ -90,6 +90,9 @@ async function init() {
   layerControl = L.control
     .layers(null, layers, { collapsed: false })
     .addTo(map);
+  
+  // make applicants checked by default
+  Applicants.addTo(map);
 
   async function createCommAreas() {
     const areas = await fetchCommAreas();
