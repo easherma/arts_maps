@@ -72,19 +72,22 @@ async function init() {
     dataCsvUrl: "helpdesk.csv",
   });
   const OutreachCounts = await createChoroplethLayer({
-    dataCsvUrl: "outreach.csv",
+    dataCsvUrl: "outreach_5_24.csv",
     dataToDisplay: ["client_name"],
     pickedColor: `118,42,131`.y,
   });
+  const FinalApplicants = await createChoroplethLayer({
+    dataCsvUrl: "DCEO_Applicants_5_24.csv",
+  });
   const Applicants = await createAppCounts();
-  const data = createLayer(filteredGeoJSON, map);
+  // const data = createLayer(filteredGeoJSON, map);
 
   const CommAreas = await createCommAreas();
 
   const layers = {
     "Help Desk Counts": helpDeskCounts,
     "Targeted Outreach": OutreachCounts,
-    Applicants: Applicants,
+    FinalApplicants: FinalApplicants,
     "Chicago Community Areas": CommAreas,
   };
   layerControl = L.control
@@ -92,7 +95,7 @@ async function init() {
     .addTo(map);
   
   // make applicants checked by default
-  Applicants.addTo(map);
+  FinalApplicants.addTo(map);
 
   async function createCommAreas() {
     const areas = await fetchCommAreas();

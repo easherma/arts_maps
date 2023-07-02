@@ -23,12 +23,7 @@ async function createChoroplethLayer(options) {
 
   // Create the choropleth layer
   const choroplethLayer = L.geoJSON(filteredGeoJSON, {
-    style: (feature) => {
-      const zipcode = feature.properties.ZCTA5CE20;
-      const count = dataByZipcode[zipcode] ? dataByZipcode[zipcode].length : 0;
-      const color = `rgba(${pickedColor}, ${count / 3})`;
-      return { fillColor: color, fillOpacity: 0.9, weight: 1, opacity: 0.9, color: '#242f00' };
-    },
+    style: createStyle(),
     onEachFeature: (feature, layer) => {
       const zipcode = feature.properties.ZCTA5CE20;
       const count = dataByZipcode[zipcode] ? dataByZipcode[zipcode].length : 0;
@@ -85,4 +80,149 @@ async function createChoroplethLayer(options) {
   });
 
   return choroplethLayer;
+
+  function createStyle() {
+    if (dataCsvUrl === "DCEO_Applicants_5_24.csv") {
+      console.log("makin buckets");
+      
+      return (feature) => {
+        feature.properties.count = dataByZipcode[feature.properties.zipcode] ? dataByZipcode[feature.properties.zipcode].length : 0;
+        if (feature.properties["count"] >= 1.0 &&
+          feature.properties["count"] <= 1.78117) {
+          return {
+            opacity: 1,
+            color: "rgba(35,35,35,1.0)",
+            dashArray: "",
+            lineCap: "butt",
+            lineJoin: "miter",
+            weight: 0.8,
+            fill: true,
+            fillOpacity: 0.65,
+            fillColor: "rgba(247,252,245,1.0)",
+            interactive: true,
+          };
+        }
+        if (feature.properties["count"] >= 1.78117 &&
+          feature.properties["count"] <= 3.498728) {
+          return {
+            opacity: 1,
+            color: "rgba(35,35,35,1.0)",
+            dashArray: "",
+            lineCap: "butt",
+            lineJoin: "miter",
+            weight: 0.8,
+            fill: true,
+            fillOpacity: 0.65,
+            fillColor: "rgba(221,242,215,1.0)",
+            interactive: true,
+          };
+        }
+        if (feature.properties["count"] >= 3.498728 &&
+          feature.properties["count"] <= 9.160305) {
+          return {
+            opacity: 1,
+            color: "rgba(35,35,35,1.0)",
+            dashArray: "",
+            lineCap: "butt",
+            lineJoin: "miter",
+            weight: 0.8,
+            fill: true,
+            fillOpacity: 0.65,
+            fillColor: "rgba(178,224,171,1.0)",
+            interactive: true,
+          };
+        }
+        if (feature.properties["count"] >= 9.160305 &&
+          feature.properties["count"] <= 15.298982) {
+          return {
+            opacity: 1,
+            color: "rgba(35,35,35,1.0)",
+            dashArray: "",
+            lineCap: "butt",
+            lineJoin: "miter",
+            weight: 0.8,
+            fill: true,
+            fillOpacity: 0.65,
+            fillColor: "rgba(123,199,124,1.0)",
+            interactive: true,
+          };
+        }
+        if (feature.properties["count"] >= 15.298982 &&
+          feature.properties["count"] <= 19.497455) {
+          return {
+            opacity: 1,
+            color: "rgba(35,35,35,1.0)",
+            dashArray: "",
+            lineCap: "butt",
+            lineJoin: "miter",
+            weight: 0.8,
+            fill: true,
+            fillOpacity: 0.65,
+            fillColor: "rgba(61,167,90,1.0)",
+            interactive: true,
+          };
+        }
+        if (feature.properties["count"] >= 19.497455 &&
+          feature.properties["count"] <= 28.816794) {
+          return {
+            opacity: 1,
+            color: "rgba(35,35,35,1.0)",
+            dashArray: "",
+            lineCap: "butt",
+            lineJoin: "miter",
+            weight: 0.8,
+            fill: true,
+            fillOpacity: 0.65,
+            fillColor: "rgba(19,126,58,1.0)",
+            interactive: true,
+          };
+        }
+        if (feature.properties["count"] >= 28.816794 &&
+          feature.properties["count"] <= 50.0) {
+          return {
+            opacity: 1,
+            color: "rgba(35,35,35,1.0)",
+            dashArray: "",
+            lineCap: "butt",
+            lineJoin: "miter",
+            weight: 0.8,
+            fill: true,
+            fillOpacity: 0.65,
+            fillColor: "rgba(0,68,27,1.0)",
+            interactive: true,
+          };
+        }
+        if (feature.properties["count"] >= 50.0) {
+          return {
+            opacity: 1,
+            color: "rgba(35,35,35,1.0)",
+            dashArray: "",
+            lineCap: "butt",
+            lineJoin: "miter",
+            weight: 0.8,
+            fill: true,
+            fillOpacity: 0.65,
+            fillColor: "rgba(0,68,27,1.0)",
+            interactive: true,
+          };
+        }
+      };
+    } else {
+      // default styling no data buckets
+      return (feature) => {
+        const zipcode = feature.properties.ZCTA5CE20;
+        const count = dataByZipcode[zipcode]
+          ? dataByZipcode[zipcode].length
+          : 0;
+        const color = `rgba(${pickedColor}, ${count / 3})`;
+        return {
+          fillColor: color,
+          fillOpacity: 0.9,
+          weight: 1,
+          opacity: 0.9,
+          color: "#242f00",
+        };
+      };
+    }
+  }
 }
