@@ -77,13 +77,13 @@ async function init() {
     pickedColor: `118,42,131`.y,
   });
   const Applicants = await createAppCounts();
-  // const data = createLayer(filteredGeoJSON, map);
+  const data = createLayer(filteredGeoJSON, map);
 
   const CommAreas = await createCommAreas();
 
   const layers = {
-    // "Help Desk Counts": helpDeskCounts,
-    // "Targeted Outreach": OutreachCounts,
+    "Help Desk Counts": helpDeskCounts,
+    "Targeted Outreach": OutreachCounts,
     Applicants: Applicants,
     "Chicago Community Areas": CommAreas,
   };
