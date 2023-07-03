@@ -114,7 +114,7 @@ async function createChoroplethLayer(options) {
           })
           .sort((a, b) => b.percentage - a.percentage)
           .map(({ value, count, percentage }) => {
-            return `<div>${value}: ${count} (${percentage}%)</div>`;
+            return `<tr><td>${value}</td><td>${count}</td><td>${percentage}%</td></tr>`;
           });
       
           if (columnValues.length > 0) {
@@ -125,23 +125,26 @@ async function createChoroplethLayer(options) {
         // Create the summary table rows for specified columns
         const summaryRows = Object.entries(summaryData)
           .map(([column, values]) => {
-            return `<tr><td>${column}</td><td>${values}</td></tr>`;
+            return `${values}`;
           })
           .join("");
       
         // Create the summary table for specified columns
-        const summaryTable = `
-          <table>
-            <thead>
-              <tr>
-                <th>Column</th>
-                <th>Values</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${summaryRows}
-            </tbody>
-          </table>`;
+// Create the summary table for specified columns
+const summaryTable = `
+  <table>
+    <thead>
+      <tr>
+        <th>Value</th>
+        <th>Count</th>
+        <th>Percentage</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${summaryRows}
+    </tbody>
+  </table>
+`;
       
         // Determine which columns to display in the main table
         const keys = columnsToDisplay.length > 0 ? columnsToDisplay : Object.keys(data[0] || {});
@@ -160,6 +163,7 @@ async function createChoroplethLayer(options) {
       
         const table = `
         <details>
+          <summary><strong>Full Data</strong></summary>
           <table>
             <thead>
               <tr>${headers}</tr>
@@ -174,14 +178,11 @@ async function createChoroplethLayer(options) {
         const summaryContent = `
           <div><strong>Zip Code:</strong> ${zipcode}</div>
           <div><strong>Count:</strong> ${count}</div>
+          <details open><summary><strong>Demographics</strong></summary> ${summaryTable}</details>
         `;
       
-        if (demographics) {
-          `${summaryContent} <div><strong>Demographics:</strong> ${demographics}</div>`;
-        }
-      
         if (allCols) {
-          const popupContent = `<div style="overflow:auto;">${summaryTable}${summaryContent}${table}</div>`;
+          const popupContent = `<div>${summaryContent}${table}</div>`;
           layer.bindPopup(popupContent);
         } else {
           const popupContent = `${summaryTable}${summaryContent}`;
