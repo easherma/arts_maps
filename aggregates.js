@@ -93,53 +93,103 @@ async function createChoroplethLayer(options) {
       createTable();
 
       function createTable() {
-        // Determine which columns to display based on the object
         const columnsToDisplay = dataToDisplay ? dataToDisplay || [] : [];
-
-        // If no columns are specified, display all columns
-        const keys =
-          columnsToDisplay.length > 0
-            ? columnsToDisplay
-            : Object.keys(data[0] || {});
-
+        const columnsToSummarize = ["race_or_ethnicity_(full)", "race/ethnicity_identity"]; // Replace with your desired column names
+      
+        // Create summary data for specified columns
+        const summaryData = {};
+        columnsToSummarize.forEach((column) => {
+          const columnValues = Array.from(new Set(data.map((row) => row[column]))).filter(Boolean);
+          const valuesCount = {};
+          columnValues.forEach((value) => {
+            valuesCount[value] = data.filter((row) => row[column] === value).length;
+          });
+      
+          const total = Object.values(valuesCount).reduce((sum, count) => sum + count, 0);
+      
+          const summaryValues = Object.entries(valuesCount)
+          .map(([value, count]) => {
+            const percentage = ((count / total) * 100).toFixed(2);
+            return { value, count, percentage };
+          })
+          .sort((a, b) => b.percentage - a.percentage)
+          .map(({ value, count, percentage }) => {
+            return `<div>${value}: ${count} (${percentage}%)</div>`;
+          });
+      
+          if (columnValues.length > 0) {
+            summaryData[column] = summaryValues.join("");
+          }
+        });
+      
+        // Create the summary table rows for specified columns
+        const summaryRows = Object.entries(summaryData)
+          .map(([column, values]) => {
+            return `<tr><td>${column}</td><td>${values}</td></tr>`;
+          })
+          .join("");
+      
+        // Create the summary table for specified columns
+        const summaryTable = `
+          <table>
+            <thead>
+              <tr>
+                <th>Column</th>
+                <th>Values</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${summaryRows}
+            </tbody>
+          </table>`;
+      
+        // Determine which columns to display in the main table
+        const keys = columnsToDisplay.length > 0 ? columnsToDisplay : Object.keys(data[0] || {});
+      
         // Create the table headers
         const headers = keys.map((key) => `<th>${key}</th>`).join("");
-
+      
         // Create the table rows
         const rows = data
           .map((row) => {
-            // Create a table cell for each value in the row
+            // Create a table cell for each value in the row for specified columns
             const cells = keys.map((key) => `<td>${row[key]}</td>`).join("");
             return `<tr>${cells}</tr>`;
           })
           .join("");
-
+      
         const table = `
-        <table>
-          <thead>
-            <tr>${headers}</tr>
-          </thead>
-          <tbody>
-            ${rows}
-          </tbody>
-        </table>`;
-
-        // Create the final popup content with the table
+        <details>
+          <table>
+            <thead>
+              <tr>${headers}</tr>
+            </thead>
+            <tbody>
+              ${rows}
+            </tbody>
+          </table>
+          </details>`;
+      
+        // Create the final popup content with the summary table at the top
         const summaryContent = `
-            <div><strong>Zip Code:</strong> ${zipcode}</div>
-            <div><strong>Count:</strong> ${count}</div>
+          <div><strong>Zip Code:</strong> ${zipcode}</div>
+          <div><strong>Count:</strong> ${count}</div>
         `;
+      
         if (demographics) {
-          `${summaryContent} <div><strong>Demographics:</strong> ${demographics}</div>`
+          `${summaryContent} <div><strong>Demographics:</strong> ${demographics}</div>`;
         }
+      
         if (allCols) {
-          const popupContent = `<div style="overflow:auto;">${summaryContent} ${table}</div>`;
+          const popupContent = `<div style="overflow:auto;">${summaryTable}${summaryContent}${table}</div>`;
           layer.bindPopup(popupContent);
         } else {
-          const popupContent = `${summaryContent}`;
+          const popupContent = `${summaryTable}${summaryContent}`;
           layer.bindPopup(popupContent);
         }
       }
+      
+      
     },
   });
 
