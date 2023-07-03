@@ -11,6 +11,9 @@ async function createChoroplethLayer(options) {
   const dataByZipcode = {};
   const { zipcodeGeoJSON, dataRows } = await getData(dataCsvUrl);
 
+
+
+
   dataRows.forEach((row) => {
     const { zipcode } = row;
     if (!countByZipcode[zipcode]) {
@@ -21,6 +24,62 @@ async function createChoroplethLayer(options) {
     dataByZipcode[zipcode].push(row);
   });
 
+  const ethnicityValuesByZipcode = collectEthnicityValues(dataByZipcode);
+
+  function collectEthnicityValues(dataByZipcode) {
+    const ethnicityValuesByZipcode = {};
+  
+    Object.entries(dataByZipcode).forEach(([zipcode, row]) => {
+      let ethnicityColumn = row[0]['race_or_ethnicity_(full)'] || row[0]['race/ethnicity_identity'];
+      if (ethnicityColumn == '') {
+        ethnicityColumn = "Not Provided"
+      } 
+      if (ethnicityColumn) {
+        if (!ethnicityValuesByZipcode[zipcode]) {
+          ethnicityValuesByZipcode[zipcode] = [];
+        }
+        ethnicityValuesByZipcode[zipcode].push(ethnicityColumn);
+      }
+    });
+  
+    return ethnicityValuesByZipcode;
+  }
+  
+  function calculateEthnicityCounts(ethnicityValues) {
+    const counts = {};
+    
+    ethnicityValues.forEach((value) => {
+      counts[value] = (counts[value] || 0) + 1;
+    });
+    return counts;
+  }
+  
+  function calculateEthnicityPercentage(counts, totalCount) {
+    const percentages = {};
+    Object.keys(counts).forEach((value) => {
+      const count = counts[value];
+      const percentage = (count / totalCount) * 100;
+      percentages[value] = { count, percentage };
+    });
+    return percentages;
+  }
+  
+  function calculateDemographicsByZipcode(ethnicityValuesByZipcode) {
+    const demographicsByZipcode = {};
+    Object.entries(ethnicityValuesByZipcode).forEach(([zipcode, ethnicityValues]) => {
+      const counts = calculateEthnicityCounts(ethnicityValues);
+      const totalCount = ethnicityValues.length;
+      const percentages = calculateEthnicityPercentage(counts, totalCount);
+      demographicsByZipcode[zipcode] = percentages;
+    });
+    return demographicsByZipcode;
+  }
+  
+  
+
+
+
+
   // Create the choropleth layer
   const choroplethLayer = L.geoJSON(filteredGeoJSON, {
     style: createStyle(),
@@ -28,6 +87,8 @@ async function createChoroplethLayer(options) {
       const zipcode = feature.properties.ZCTA5CE20;
       const count = dataByZipcode[zipcode] ? dataByZipcode[zipcode].length : 0;
       const data = dataByZipcode[zipcode] || [];
+      const demographics = calculateDemographicsByZipcode(ethnicityValuesByZipcode);
+
 
       createTable();
 
@@ -68,6 +129,9 @@ async function createChoroplethLayer(options) {
             <div><strong>Zip Code:</strong> ${zipcode}</div>
             <div><strong>Count:</strong> ${count}</div>
         `;
+        if (demographics) {
+          `${summaryContent} <div><strong>Demographics:</strong> ${demographics}</div>`
+        }
         if (allCols) {
           const popupContent = `<div style="overflow:auto;">${summaryContent} ${table}</div>`;
           layer.bindPopup(popupContent);
@@ -81,12 +145,32 @@ async function createChoroplethLayer(options) {
 
   return choroplethLayer;
 
+
+
+  // function calculateEthnicityPercentage(ethnicityValues) {
+  //   // Count the occurrences of each value
+  //   const counts = {};
+  //   ethnicityValues.forEach((value) => {
+  //     counts[value] = (counts[value] || 0) + 1;
+  //   });
+
+  //   // Calculate the percentage for each value
+  //   const totalCount = ethnicityValues.length;
+  //   const percentages = {};
+  //   Object.keys(counts).forEach((value) => {
+  //     const count = counts[value];
+  //     const percentage = (count / totalCount) * 100;
+  //     percentages[value] = { count, percentage };
+  //   });
+
+  //   return percentages;
+  // }
+
   function createStyle() {
     if (dataCsvUrl === "DCEO_Applicants_5_24.csv") {
-      console.log("makin buckets");
-      
       return (feature) => {
         feature.properties.count = dataByZipcode[feature.properties.zipcode] ? dataByZipcode[feature.properties.zipcode].length : 0;
+        
         if (feature.properties["count"] >= 1.0 &&
           feature.properties["count"] <= 1.78117) {
           return {

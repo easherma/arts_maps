@@ -87,7 +87,7 @@ async function init() {
   const layers = {
     "Help Desk Counts": helpDeskCounts,
     "Targeted Outreach": OutreachCounts,
-    FinalApplicants: FinalApplicants,
+    Applicants: FinalApplicants,
     "Chicago Community Areas": CommAreas,
   };
   layerControl = L.control
